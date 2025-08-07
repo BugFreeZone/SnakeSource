@@ -1,12 +1,14 @@
 from os import system, chdir, listdir
-from sys import argv,exit
-from json import load
+from sys import argv, exit
+import json
 
 class PM:
     def __init__(self):
+        self.bindirs=['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/', '/usr/local/']
+        self.db={}
         try:
-            with open('package.json') as f:
-                self.db=load(f)
+            with open('packages.json') as f:
+                self.db=json.load(f)
         except FileNotFoundError:
             print('[Error]: File packages.json not found')
             exit()
@@ -35,12 +37,13 @@ class PM:
             print(f'[{pkgname}]: Resolvind dependencies . . .')
             for dep in self.db[pkgname]['deps']:
                 if not self.is_installed(dep):
+                    print(f'[{pkgname}]: Installing dependencies({dep})')
                     if dep in self.db:
-                        print(f'[{pkgname}]: Installing dependencies({dep})')
                         self.install(dep)
                     else:
-                        print(f'[{pkgname}]: {dep} is needed but not in packages.json')
-                        exit()
+                        if system(f'sudo dnf install {dep} >/dev/null')!=0:
+                            print(f'[{pkgname}]: Installing failed')
+                            exit()
             print(f'[{pkgname}]: Making . . .')
             try:
                 chdir(pkgname)
@@ -67,15 +70,19 @@ class PM:
         if not found:
             print(f'[{pkgname}]: Not found')
     def is_installed(self, pkgname:str):
-        return True if pkgname in listdir('/bin/') or pkgname in listdir('/sbin/') or pkgname in listdir('/usr/bin/') or pkgname in listdir('/usr/sbin/') else False
+        for i in self.bindirs:
+            if pkgname in listdir(i):
+                return True
+        return False
     def list(self):
+        founded=[]
         for i in self.db:
-            if self.is_installed(i):
+            if self.is_installed(i) and i not in founded:
                 print(f'[{i}]: Found')
+                founded.append(i)
 
 if __name__=='__main__':
     pm=PM()
-    pm.list()
     if len(argv) > 1:
         if argv[1]=='install':
             try:
