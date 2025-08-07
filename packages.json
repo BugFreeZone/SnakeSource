@@ -1,12 +1,27 @@
 {
 	"neofetch": {
 		"url": "https://github.com/dylanaraps/neofetch.git",
-		"deps": [],
+		"deps": ["git", "gcc", "make"],
 		"build_command": "make install"
 	},
 	"toybox": {
 		"url": "https://github.com/landley/toybox.git",
-		"deps": [],
+		"deps": ["git", "gcc", "make"],
 		"build_command": "make defconfig && make install"
+	},
+	"vlc": {
+        "url": "https://code.videolan.org/videolan/vlc.git",
+        "deps": ["git", "gcc-c++", "make", "cmake", "pkgconfig"],
+        "build_command": "sudo dnf builddep vlc && ./bootstrap && ./configure --prefix=/usr/local && make -j$(nproc) && sudo make install && sudo ldconfig"
+	},
+	"firefox": {
+        	"url": "https://github.com/mozilla/gecko-dev.git",
+        	"deps": ["git", "mercurial", "python3", "python3-pip", "gcc-c++", "autoconf", "automake", "libtool", "gtk3-devel", "dbus-glib-devel", "pulseaudio-libs-devel", "libXt-devel", "libX11-xcb-devel", "yasm", "nodejs", "npm", "clang", "llvm", "rust", "cargo"],
+        	"build_command": "./mach bootstrap > /dev/null && echo 'ac_add_options --enable-application=browser\nac_add_options --enable-release\nac_add_options --enable-optimize\nac_add_options --disable-debug\nmk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj-ff-release' > .mozconfig && ./mach build faster && sudo ./mach install"
+	},
+	"cowsay": {
+        	"url": "https://github.com/piuccio/cowsay.git",
+        	"deps": ["perl", "perl-Text-CharWidth", "perl-Text-Iconv"],
+        	"build_command": "make && sudo make install"
 	}
 }
