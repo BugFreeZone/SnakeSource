@@ -1,0 +1,12 @@
+{
+	"neofetch": {
+		"url": "https://github.com/dylanaraps/neofetch.git",
+		"deps": [],
+		"build_command": "make install"
+	},
+	"toybox": {
+		"url": "https://github.com/landley/toybox.git",
+		"deps": [],
+		"build_command": "make defconfig && make install"
+	}
+}
